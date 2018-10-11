@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+    <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+    <!--xmlns:context="http://www.springframework.org/schema/context"-->
+    <!--xmlns:aop="http://www.springframework.org/schema/aop"-->
+    <!--xsi:schemaLocation="http://www.springframework.org/schema/beans-->
+    <!--http://www.springframework.org/schema/beans/spring-beans.xsd-->
+    <!--http://www.springframework.org/schema/context-->
+    <!--http://www.springframework.org/schema/context/spring-context.xsd">-->
+
+    <!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+    <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+    <!--xmlns:context="http://www.springframework.org/schema/context"-->
+    <!--xsi:schemaLocation="http://www.springframework.org/schema/beans -->
+    <!--http://www.springframework.org/schema/beans/spring-beans.xsd">-->
+
+    <!-- 指定扫描com.xiaoqi.domain包下的所有包 -->
+    <context:component-scan base-package="com.xiaoqi.domain"></context:component-scan>
+    <bean name="car2" class="com.xiaoqi.domain.Car"/>
+
+    <!-- 准备工作,导入aop命名空间  -->
+    <!-- 配置通知对象 -->
+    <bean name="userServiceTarget" class="com.xiaoqi.service.UserServiceImpl"/>
+    <!--  配置将通知织入目标对象-->
+    <bean name="myAdvice" class="com.xiaoqi.aspect.MyAdvice"/>
+    <aop:config>
+        <!-- 配置切入点
+         public void com.xiaoqi.service.UserServiceImpl.save()
+         void com.xiaoqi.service.UserServiceImpl.save()
+         * com.xiaoqi.service.UserServiceImpl.save()
+         * com.xiaoqi.service.UserServiceImpl.*()
+         * com.xiaoqi.service.UserServiceImpl.*(..)
+         * com.xiaoqi.service.*ServiceImpl.*(..)
+         * com.xiaoqi.service..*ServiceImpl.*(..)
+         -->
+        <aop:pointcut id="pc" expression="execution(* com.xiaoqi.service.*ServiceImpl.*(..))"/>
+        <!-- 配置通知 -->
+        <aop:aspect ref="myAdvice">
+            <aop:before method="before" pointcut-ref="pc"/>
+            <aop:after-returning method="afterReturning" pointcut-ref="pc"/>
+            <aop:around method="around" pointcut-ref="pc"/>
+            <aop:after-throwing method="afterException" pointcut-ref="pc"/>
+            <aop:after method="after" pointcut-ref="pc"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
